@@ -4,6 +4,8 @@ import com.lizardostrich.quoteandpolicymanagement.model.Policy;
 import com.lizardostrich.quoteandpolicymanagement.repository.PolicyRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PolicyService {
     private PolicyRepository policyRepository;
@@ -14,5 +16,9 @@ public class PolicyService {
 
     public Policy savePolicy(Policy policy){
         return policyRepository.save(policy);
+    }
+
+    public List<Policy> getAllPolicies() {
+        return policyRepository.findAll();
     }
 }
