@@ -3,6 +3,12 @@ package com.lizardostrich.quoteandpolicymanagement.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+enum Level{
+    STARTER,
+    ESSENTIAL,
+    ADVANCED
+}
+
 @Data
 @Entity
 @Table(name = "policy")
@@ -12,6 +18,8 @@ public class Policy {
     private int id;
     @Column(name = "title")
     private String title;
+    @Column(name = "level", columnDefinition = "STARTER")
+    private Level level;
     @Column(name = "description")
     private String description;
     @Column(name = "coverage")
