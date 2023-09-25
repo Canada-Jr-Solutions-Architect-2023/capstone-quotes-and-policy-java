@@ -27,7 +27,7 @@ public class PolicyController {
     }
 
     @PutMapping
-    public ResponseEntity updatePolicy(@RequestBody Policy policy){
+    public ResponseEntity<Policy> updatePolicy(@RequestBody Policy policy){
         if(policy.getId() == null){
             return new ResponseEntity("Entity requires Id for update",HttpStatus.BAD_REQUEST);
         } else if (this.policyService.getPolicyById(policy.getId()) == null) {
@@ -35,6 +35,16 @@ public class PolicyController {
         }
         else{
             return new ResponseEntity(this.policyService.updatePolicy(policy), HttpStatus.ACCEPTED);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Policy> getPolicyById(@PathVariable int id){
+        if (this.policyService.getPolicyById((long) id) == null) {
+            return new ResponseEntity("Entity not found",HttpStatus.BAD_REQUEST);
+        }
+        else{
+            return new ResponseEntity(policyService.getPolicyById(Long.valueOf(id)),HttpStatus.ACCEPTED);
         }
     }
 }
