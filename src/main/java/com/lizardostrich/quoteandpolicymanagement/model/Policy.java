@@ -15,7 +15,7 @@ enum Level{
 public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     @Column(name = "title")
     private String title;
     @Column(name = "level", columnDefinition = "STARTER")
