@@ -25,4 +25,16 @@ public class PolicyController {
     public ResponseEntity<Policy> savePolicy(@RequestBody Policy policy){
         return new ResponseEntity<Policy>(policyService.savePolicy(policy), HttpStatus.CREATED);
     }
+
+    @PutMapping
+    public ResponseEntity updatePolicy(@RequestBody Policy policy){
+        if(policy.getId() == null){
+            return new ResponseEntity("Entity requires Id for update",HttpStatus.BAD_REQUEST);
+        } else if (this.policyService.getPolicyById(policy.getId()) == null) {
+            return new ResponseEntity("Entity not found",HttpStatus.BAD_REQUEST);
+        }
+        else{
+            return new ResponseEntity(this.policyService.updatePolicy(policy), HttpStatus.ACCEPTED);
+        }
+    }
 }

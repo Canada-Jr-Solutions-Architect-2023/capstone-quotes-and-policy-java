@@ -21,4 +21,12 @@ public class PolicyService {
     public List<Policy> getAllPolicies() {
         return policyRepository.findAll();
     }
+
+    public Policy getPolicyById(Long id) {
+        return policyRepository.findById(id).orElse(null);
+    }
+
+    public Policy updatePolicy(Policy policy) {
+        return policyRepository.save(policy);
+    }
 }
