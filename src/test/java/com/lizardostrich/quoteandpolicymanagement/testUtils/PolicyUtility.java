@@ -8,12 +8,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PolicyUtility {
+
+    private static Policy policy = new Policy("Vision", Level.STARTER, "Description", 10000, 10);
     public static List<Policy> getPolicies() {
         return policies;
     }
 
     private static List<Policy> policies = new ArrayList<>(Arrays.asList(
-            new Policy("Vision", Level.STARTER, "DESC", 10000, 10),
-            new Policy("Vision2", Level.STARTER, "DESC", 10000, 10)
+            new Policy("Vision", Level.STARTER, "Description for vision starter", 500, 50),
+            new Policy("Vision", Level.ESSENTIAL, "Description for vision essential", 10000, 100),
+            new Policy("Vision2", Level.ADVANCED, "Description for vision advanced", 20000, 150)
     ));
 }

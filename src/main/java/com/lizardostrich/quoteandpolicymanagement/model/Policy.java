@@ -12,7 +12,8 @@ public class Policy {
     private Long id;
     @Column(name = "title")
     private String title;
-    @Column(name = "level", columnDefinition = "STARTER")
+    @Column(name = "level")
+    @Convert(converter = LevelConverter.class)
     private Level level;
     @Column(name = "description")
     private String description;

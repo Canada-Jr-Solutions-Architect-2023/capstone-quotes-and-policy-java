@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
@@ -34,15 +33,24 @@ public class PolicyControllerTest {
     @Test
     public void getAllPolicies_shouldReturnAllPolicies() throws Exception {
 
-        final MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/policy/all").contentType(MediaType.APPLICATION_JSON);
-
         List<Policy> mockPolicies = PolicyUtility.getPolicies();
 
         when(policyService.getAllPolicies()).thenReturn(mockPolicies);
 
-        mockMvc.perform(builder).andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/all"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value(mockPolicies.get(0).getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].level").value("STARTER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].description").value(mockPolicies.get(0).getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].coverage").value(mockPolicies.get(0).getCoverage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].premium").value(mockPolicies.get(0).getPremium()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].title").value(mockPolicies.get(2).getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].level").value("ADVANCED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].description").value(mockPolicies.get(2).getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].coverage").value(mockPolicies.get(2).getCoverage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].premium").value(mockPolicies.get(2).getPremium()));
+
 
     }
 }
