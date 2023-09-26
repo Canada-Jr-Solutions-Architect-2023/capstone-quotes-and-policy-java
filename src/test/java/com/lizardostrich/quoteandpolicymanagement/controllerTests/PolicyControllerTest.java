@@ -74,6 +74,19 @@ public class PolicyControllerTest {
         verify(policyService,times(1)).savePolicy(any(Policy.class));
     }
 
+    @Test
+    public void getPolicyById_shouldReturnMatchedPolicy() throws Exception{
+        Policy policy = PolicyUtility.getPolicy();
+        Long policyId = 1L;
+        when(policyService.getPolicyById(policyId)).thenReturn(policy);
 
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/{id}",policyId))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(policy.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level").value("STARTER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(policy.getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.coverage").value(policy.getCoverage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.premium").value(policy.getPremium()));
+    }
 
 }

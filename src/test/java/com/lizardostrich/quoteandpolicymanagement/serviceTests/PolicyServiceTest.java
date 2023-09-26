@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,4 +51,17 @@ public class PolicyServiceTest {
         assertEquals(policy,savedPolicy);
         verify(policyRepository,times(1)).save(policy);
     }
+
+    @Test
+    public void getPolicyById_shouldReturnMatchedPolicy(){
+        Policy policy = PolicyUtility.getPolicy();
+        Long policyId = 1L;
+        when(policyRepository.findById(policyId)).thenReturn(Optional.ofNullable(policy));
+
+        Policy matchedPolicy = policyService.getPolicyById(policyId);
+
+        assertEquals(policy,matchedPolicy);
+        verify(policyRepository,times(1)).findById(policyId);
+    }
+
 }
