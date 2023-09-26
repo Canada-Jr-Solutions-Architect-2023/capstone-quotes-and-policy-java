@@ -11,8 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class PolicyRepositoryTest {
@@ -37,4 +36,12 @@ public class PolicyRepositoryTest {
                 ()-> assertEquals(mockPolicies.get(2),policies.get(2))
         );
     }
+
+    @Test
+    public void save_SavesPolicyInDb(){
+        Policy policy = PolicyUtility.getPolicy();
+        Policy savedPolicy = testEntityManager.persistAndFlush(policy);
+        assertNotNull(savedPolicy.getId());
+    }
+
 }

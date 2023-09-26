@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class PolicyServiceTest {
@@ -27,7 +28,7 @@ public class PolicyServiceTest {
     @Test
     public void getAllPolicies_shouldReturnAllPolicies(){
         List<Policy> mockPolicies = PolicyUtility.getPolicies();
-        Mockito.when(policyRepository.findAll()).thenReturn(mockPolicies);
+        when(policyRepository.findAll()).thenReturn(mockPolicies);
 
         List<Policy> policies = policyService.getAllPolicies();
 
@@ -37,7 +38,16 @@ public class PolicyServiceTest {
                 ()-> assertEquals(mockPolicies.get(1),policies.get(1)),
                 ()-> assertEquals(mockPolicies.get(2),policies.get(2))
         );
+    }
 
+    @Test
+    public void savePolicy_shouldReturnSavedPolicy(){
+        Policy policy = PolicyUtility.getPolicy();
+        when(policyRepository.save(policy)).thenReturn(policy);
 
+        Policy savedPolicy = policyService.savePolicy(policy);
+
+        assertEquals(policy,savedPolicy);
+        verify(policyRepository,times(1)).save(policy);
     }
 }

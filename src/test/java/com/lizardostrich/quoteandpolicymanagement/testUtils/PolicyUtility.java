@@ -9,6 +9,10 @@ import java.util.List;
 
 public class PolicyUtility {
 
+    public static Policy getPolicy() {
+        return policy;
+    }
+
     private static Policy policy = new Policy("Vision", Level.STARTER, "Description", 10000, 10);
     public static List<Policy> getPolicies() {
         return policies;
