@@ -11,7 +11,7 @@ public class UserPolicy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
     @Column(name = "policy_id")
     private int policyId;
     @Column(name = "coverage")

@@ -2,6 +2,7 @@ package com.lizardostrich.quoteandpolicymanagement.service;
 
 import com.lizardostrich.quoteandpolicymanagement.model.Policy;
 import com.lizardostrich.quoteandpolicymanagement.repository.PolicyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,14 @@ public class PolicyService {
     }
 
     public Policy updatePolicy(Policy policy) {
-        return policyRepository.save(policy);
+        Policy existingPolicy = policyRepository.findById(policy.getId()).orElseThrow(()->new EntityNotFoundException("Policy not found."));
+
+        existingPolicy.setTitle(policy.getTitle());
+        existingPolicy.setLevel(policy.getLevel());
+        existingPolicy.setDescription(policy.getDescription());
+        existingPolicy.setCoverage(policy.getCoverage());
+        existingPolicy.setPremium(policy.getPremium());
+
+        return policyRepository.save(existingPolicy);
     }
 }
