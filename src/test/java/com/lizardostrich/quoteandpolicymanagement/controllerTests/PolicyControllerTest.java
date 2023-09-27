@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PolicyController.class)
 public class PolicyControllerTest {
@@ -41,7 +42,7 @@ public class PolicyControllerTest {
         when(policyService.getAllPolicies()).thenReturn(mockPolicies);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/all"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value(mockPolicies.get(0).getTitle()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].level").value("STARTER"))
@@ -64,7 +65,7 @@ public class PolicyControllerTest {
                         .post("/api/policy")
                         .contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(policy)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(policy.getTitle()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level").value("STARTER"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(policy.getDescription()))
@@ -81,11 +82,64 @@ public class PolicyControllerTest {
         when(policyService.getPolicyById(policyId)).thenReturn(policy);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/{id}",policyId))
-                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(status().isAccepted())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(policy.getTitle()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level").value("STARTER"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(policy.getDescription()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.coverage").value(policy.getCoverage()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.premium").value(policy.getPremium()));
+
+        verify(policyService,times(2)).getPolicyById(any(Long.class));
+    }
+
+    @Test
+    public void updatePolicy_shouldReturnUpdatedPolicy() throws Exception {
+        Policy policy = PolicyUtility.getPolicy();
+
+        when(policyService.getPolicyById(policy.getId())).thenReturn(policy);
+        when(policyService.updatePolicy(policy)).thenReturn(policy);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/policy")
+                        .contentType(MediaType.APPLICATION_JSON).
+                        content(objectMapper.writeValueAsString(policy)))
+                .andExpect(status().isAccepted())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(policy.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(policy.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level").value("STARTER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(policy.getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.coverage").value(policy.getCoverage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.premium").value(policy.getPremium()));
+
+        verify(policyService,times(1)).getPolicyById(any(Long.class));
+        verify(policyService,times(1)).updatePolicy(any(Policy.class));
+    }
+
+    @Test
+    public void updatePolicy_InvalidId() throws Exception {
+        Policy policy = PolicyUtility.getPolicy();
+        policy.setId(null);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/policy")
+                        .contentType(MediaType.APPLICATION_JSON).
+                        content(objectMapper.writeValueAsString(policy)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updatePolicy_PolicyNotFound() throws Exception {
+        Policy policy = PolicyUtility.getPolicy();
+        policy.setId(9L);
+
+        when(policyService.getPolicyById(policy.getId())).thenReturn(null);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/policy")
+                        .contentType(MediaType.APPLICATION_JSON).
+                        content(objectMapper.writeValueAsString(policy)))
+                .andExpect(status().isNotFound());
+
+        verify(policyService,times(1)).getPolicyById(any(Long.class));
     }
 }

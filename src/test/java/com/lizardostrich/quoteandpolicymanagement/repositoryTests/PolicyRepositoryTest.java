@@ -33,8 +33,7 @@ public class PolicyRepositoryTest {
     @Test
     public void findAll_shouldReturnAllPolicies(){
         List<Policy> mockPolicies = PolicyUtility.getPolicies();
-        mockPolicies.forEach(testEntityManager::persistAndFlush);
-        testEntityManager.flush();
+        mockPolicies.forEach(testEntityManager::merge);
 
         List<Policy> policies = policyRepository.findAll();
 
@@ -48,7 +47,7 @@ public class PolicyRepositoryTest {
 
     @Test
     public void save_SavesPolicyInDb(){
-        Policy policy = PolicyUtility.getPolicy();
+        Policy policy = new Policy("title", Level.STARTER,"DESC",100,10);
         Policy savedPolicy = testEntityManager.persistAndFlush(policy);
         assertNotNull(savedPolicy.getId());
     }
@@ -62,5 +61,21 @@ public class PolicyRepositoryTest {
         Optional<Policy> matchedPolicy = policyRepository.findById(policyId);
         assertTrue(matchedPolicy.isPresent());
         assertEquals(policy,matchedPolicy.get());
+    }
+
+    @Test
+    public void updatePolicy_shouldUpdateInDb(){
+        Policy existingPolicy = PolicyUtility.getPolicy();
+        existingPolicy = testEntityManager.merge(existingPolicy);
+
+        existingPolicy.setTitle("Updated Title");
+        existingPolicy.setCoverage(50000);
+
+        Policy updatedPolicy = policyRepository.save(existingPolicy);
+
+        Policy retrievedPolicy = testEntityManager.find(Policy.class,1L);
+
+        assertEquals("Updated Title",retrievedPolicy.getTitle());
+        assertEquals(50000,retrievedPolicy.getCoverage());
     }
 }

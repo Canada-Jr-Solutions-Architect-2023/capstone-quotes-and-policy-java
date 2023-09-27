@@ -31,7 +31,7 @@ public class PolicyController {
         if(policy.getId() == null){
             return new ResponseEntity("Entity requires Id for update",HttpStatus.BAD_REQUEST);
         } else if (this.policyService.getPolicyById(policy.getId()) == null) {
-            return new ResponseEntity("Entity not found",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Entity not found",HttpStatus.NOT_FOUND);
         }
         else{
             return new ResponseEntity(this.policyService.updatePolicy(policy), HttpStatus.ACCEPTED);

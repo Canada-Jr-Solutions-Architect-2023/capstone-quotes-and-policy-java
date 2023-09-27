@@ -31,4 +31,13 @@ public class Policy {
         this.coverage = coverage;
         this.premium = premium;
     }
+
+    public Policy(Long id, String title, Level level, String description, double coverage, double premium) {
+        this.id = id;
+        this.title = title;
+        this.level = level;
+        this.description = description;
+        this.coverage = coverage;
+        this.premium = premium;
+    }
 }

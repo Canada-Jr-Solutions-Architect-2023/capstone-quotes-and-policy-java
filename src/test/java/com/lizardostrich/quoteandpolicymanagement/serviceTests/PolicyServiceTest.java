@@ -14,8 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -64,4 +63,16 @@ public class PolicyServiceTest {
         verify(policyRepository,times(1)).findById(policyId);
     }
 
+    @Test
+    public void updatePolicy_shouldReturnUpdatedPolicy(){
+        Policy policy = PolicyUtility.getPolicies().get(0);
+
+        when(policyRepository.findById(policy.getId())).thenReturn(Optional.of(policy));
+        when(policyRepository.save(policy)).thenReturn(policy);
+
+        Policy updatedPolicy = policyService.updatePolicy(policy);
+
+        assertNotNull(updatedPolicy);
+        assertEquals(policy,updatedPolicy);
+    }
 }
