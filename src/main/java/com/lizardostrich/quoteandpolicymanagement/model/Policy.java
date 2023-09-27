@@ -14,6 +14,7 @@ public class Policy {
     private String title;
     @Column(name = "level")
     @Convert(converter = LevelConverter.class)
+    @Enumerated(EnumType.STRING)
     private Level level;
     @Column(name = "description")
     private String description;
@@ -22,7 +23,7 @@ public class Policy {
     @Column(name = "premium")
     private double premium;
 
-
+    public Policy(){}
     public Policy(String title, Level level, String description, double coverage, double premium) {
         this.title = title;
         this.level = level;

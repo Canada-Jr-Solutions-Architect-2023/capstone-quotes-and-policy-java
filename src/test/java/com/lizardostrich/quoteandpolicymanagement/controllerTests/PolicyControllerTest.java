@@ -88,5 +88,4 @@ public class PolicyControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.coverage").value(policy.getCoverage()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.premium").value(policy.getPremium()));
     }
-
 }
