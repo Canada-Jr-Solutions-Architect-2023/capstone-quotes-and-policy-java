@@ -94,6 +94,18 @@ public class PolicyControllerTest {
     }
 
     @Test
+    public void getPolicyById_policyNotFound() throws Exception{
+        Policy policy = PolicyUtility.getPolicy();
+        Long policyId = policy.getId();
+        when(policyService.getPolicyById(policyId)).thenReturn(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/{id}",policyId))
+                .andExpect(status().isNotFound());
+
+        verify(policyService,times(1)).getPolicyById(any(Long.class));
+    }
+
+    @Test
     public void updatePolicy_shouldReturnUpdatedPolicy() throws Exception {
         Policy policy = PolicyUtility.getPolicy();
 

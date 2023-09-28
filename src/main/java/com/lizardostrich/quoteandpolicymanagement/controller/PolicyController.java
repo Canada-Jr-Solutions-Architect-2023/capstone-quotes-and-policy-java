@@ -41,7 +41,7 @@ public class PolicyController {
     @GetMapping("/{id}")
     public ResponseEntity<Policy> getPolicyById(@PathVariable int id){
         if (this.policyService.getPolicyById((long) id) == null) {
-            return new ResponseEntity("Entity not found",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Entity not found",HttpStatus.NOT_FOUND);
         }
         else{
             return new ResponseEntity(policyService.getPolicyById(Long.valueOf(id)),HttpStatus.ACCEPTED);
