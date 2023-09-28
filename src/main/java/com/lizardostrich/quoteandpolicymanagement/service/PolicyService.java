@@ -40,7 +40,7 @@ public class PolicyService {
     }
 
     public Boolean deletePolicyById(Long id) {
-        if(policyRepository.findById(id).isPresent()){
+        if(policyRepository.existsById(id)){
             policyRepository.deleteById(id);
             return true;
         }

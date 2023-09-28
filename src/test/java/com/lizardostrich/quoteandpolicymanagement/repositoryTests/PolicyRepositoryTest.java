@@ -78,4 +78,17 @@ public class PolicyRepositoryTest {
         assertEquals("Updated Title",retrievedPolicy.getTitle());
         assertEquals(50000,retrievedPolicy.getCoverage());
     }
+
+    @Test
+    public void deletePolicy_shouldDeleteFromDb(){
+        Policy policy = PolicyUtility.getPolicy();
+        policy = testEntityManager.merge(policy);
+
+        testEntityManager.persistAndFlush(policy);
+        Long policyId = policy.getId();
+
+        assertTrue(policyRepository.existsById(policyId));
+        policyRepository.deleteById(policyId);
+        assertFalse(policyRepository.existsById(policyId));
+    }
 }

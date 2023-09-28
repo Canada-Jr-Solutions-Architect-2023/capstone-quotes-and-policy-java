@@ -38,6 +38,8 @@ public class PolicyServiceTest {
                 ()-> assertEquals(mockPolicies.get(1),policies.get(1)),
                 ()-> assertEquals(mockPolicies.get(2),policies.get(2))
         );
+
+        verify(policyRepository,times(1)).findAll();
     }
 
     @Test
@@ -74,5 +76,30 @@ public class PolicyServiceTest {
 
         assertNotNull(updatedPolicy);
         assertEquals(policy,updatedPolicy);
+        verify(policyRepository,times(1)).findById(any(Long.class));
+        verify(policyRepository,times(1)).save(any(Policy.class));
+    }
+
+    @Test
+    public void deletePolicy_shouldDeletePolicy(){
+        Policy policy = PolicyUtility.getPolicy();
+        when(policyRepository.existsById(1L)).thenReturn(true);
+
+        boolean deleted = policyService.deletePolicyById(1L);
+
+        assertTrue(deleted);
+
+        verify(policyRepository,times(1)).existsById(any(Long.class));
+        verify(policyRepository,times(1)).deleteById(any(Long.class));
+    }
+
+    @Test
+    public void deletePolicy_policyNotFound(){
+        when(policyRepository.existsById(1L)).thenReturn(false);
+
+        boolean deleted = policyService.deletePolicyById(1L);
+
+        assertFalse(deleted);
+        verify(policyRepository,times(1)).existsById(any(Long.class));
     }
 }
