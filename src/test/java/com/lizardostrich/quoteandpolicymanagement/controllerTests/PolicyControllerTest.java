@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,6 +94,18 @@ public class PolicyControllerTest {
     }
 
     @Test
+    public void getPolicyById_policyNotFound() throws Exception{
+        Policy policy = PolicyUtility.getPolicy();
+        Long policyId = policy.getId();
+        when(policyService.getPolicyById(policyId)).thenReturn(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/{id}",policyId))
+                .andExpect(status().isNotFound());
+
+        verify(policyService,times(1)).getPolicyById(any(Long.class));
+    }
+
+    @Test
     public void updatePolicy_shouldReturnUpdatedPolicy() throws Exception {
         Policy policy = PolicyUtility.getPolicy();
 
@@ -141,5 +154,21 @@ public class PolicyControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(policyService,times(1)).getPolicyById(any(Long.class));
+    }
+
+    @Test
+    public void deletePolicy_shouldDeletePolicy() throws Exception {
+        when(policyService.deletePolicyById(1L)).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/policy/{id}",1L)).andExpect(status().isAccepted());
+        verify(policyService,times(1)).deletePolicyById(any(Long.class));
+    }
+
+    @Test
+    public void deletePolicy_policyNotFound() throws Exception {
+        when(policyService.deletePolicyById(1L)).thenReturn(false);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/policy/{id}",1L)).andExpect(status().isNotFound());
+        verify(policyService,times(1)).deletePolicyById(any(Long.class));
     }
 }

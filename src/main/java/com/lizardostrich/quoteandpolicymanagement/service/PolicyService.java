@@ -38,4 +38,14 @@ public class PolicyService {
 
         return policyRepository.save(existingPolicy);
     }
+
+    public Boolean deletePolicyById(Long id) {
+        if(policyRepository.existsById(id)){
+            policyRepository.deleteById(id);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

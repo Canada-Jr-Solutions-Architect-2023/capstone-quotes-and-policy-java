@@ -41,10 +41,22 @@ public class PolicyController {
     @GetMapping("/{id}")
     public ResponseEntity<Policy> getPolicyById(@PathVariable int id){
         if (this.policyService.getPolicyById((long) id) == null) {
-            return new ResponseEntity("Entity not found",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Entity not found",HttpStatus.NOT_FOUND);
         }
         else{
             return new ResponseEntity(policyService.getPolicyById(Long.valueOf(id)),HttpStatus.ACCEPTED);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Policy> deletePolicy(@PathVariable int id){
+        Boolean deleted = policyService.deletePolicyById(Long.valueOf(id));
+
+        if(deleted){
+            return new ResponseEntity("Policy deleted successfully", HttpStatus.ACCEPTED);
+        }
+        else{
+            return new ResponseEntity("Policy not found.", HttpStatus.NOT_FOUND);
         }
     }
 }
