@@ -9,9 +9,11 @@ public class QuoteRequest {
     private List<Long> policyIds;
     private boolean hasProvincialInsurance;
     private boolean wantsSpouseCoverage;
+    private List<Long> spousePolicyIds;
     private int age;
     private int spouseAge;
     private int numberOfDependentChildren;
+    private List<Long> dependentPolicyIds;
 
 
     public QuoteRequest(List<Long> policyIds, boolean hasProvincialInsurance, boolean wantsSpouseCoverage, int age, int spouseAge, int numberOfDependentChildren) {

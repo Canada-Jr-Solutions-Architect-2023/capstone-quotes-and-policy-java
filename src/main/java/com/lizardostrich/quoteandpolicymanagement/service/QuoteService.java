@@ -25,25 +25,56 @@ public class QuoteService {
         int age = quoteRequest.getAge();
         int spouseAge = quoteRequest.getSpouseAge();
         int numberOfDependentChildren = quoteRequest.getNumberOfDependentChildren();
-        
-        List<Policy> selectedPolicies = policyRepository.findAllById(policyIds);
-        
+
         double totalPremium = 0.0;
-        double policyPremium = 0.0;
-        for(Policy policy:selectedPolicies){
-            if(age>30 || spouseAge>30){
-                policyPremium += policy.getPremium() + adjustPremiumBasedOnAge(age,spouseAge, policy.getLevel());
-            }
-            else {
-                policyPremium += policy.getPremium();
-            }
+
+        //user individual premium calculation
+        List<Policy> selectedPolicies = policyRepository.findAllById(policyIds);
+        double userPremium = getCustomerPremium(selectedPolicies,age);
+        totalPremium += userPremium;
+
+        //spouse premium calculation
+        if(wantsSpouseCoverage){
+            List<Long> spousePolicyIds = quoteRequest.getSpousePolicyIds();
+            selectedPolicies = policyRepository.findAllById(spousePolicyIds);
+            double spousePremium = getCustomerPremium(selectedPolicies,spouseAge);
+            totalPremium += spousePremium;
         }
-        return new ResponseEntity<>(policyPremium,HttpStatus.ACCEPTED);
+
+        //dependent premium calculation
+        if(numberOfDependentChildren>0){
+            List<Long> dependentPolicyIds = quoteRequest.getDependentPolicyIds();
+            selectedPolicies = policyRepository.findAllById(dependentPolicyIds);
+            double dependentPremium = getDependentPremium(selectedPolicies,numberOfDependentChildren);
+            totalPremium += dependentPremium;
+        }
+
+        return new ResponseEntity<>(totalPremium,HttpStatus.ACCEPTED);
     }
 
-    private double adjustPremiumBasedOnAge(int age, int spouseAge, Level level) {
-        int maxAge = Math.max(age,spouseAge);
-        int multiplicationFactor  = (maxAge - 30)/10 + 1;
+    private double getDependentPremium(List<Policy> selectedPolicies, int numberOfDependentChildren) {
+        double dependentPremium = 0.0;
+        for(Policy policy:selectedPolicies){
+            dependentPremium = (policy.getPremium() / 2) * numberOfDependentChildren;
+        }
+        return dependentPremium;
+    }
+
+    private double getCustomerPremium(List<Policy> selectedPolicies, int age) {
+        double customerPremium = 0.0;
+        for(Policy policy:selectedPolicies){
+            if(age>30){
+                customerPremium += policy.getPremium() + adjustPremiumBasedOnAge(age, policy.getLevel());
+            }
+            else {
+                customerPremium += policy.getPremium();
+            }
+        }
+        return customerPremium;
+    }
+
+    private double adjustPremiumBasedOnAge(int age, Level level) {
+        int multiplicationFactor  = (age - 30)/10 + 1;
         int increasePerAgeBracketStarter = 5;
         int increasePerAgeBracketEssential = 7;
         int increasePerAgeBracketAdvanced = 8;
