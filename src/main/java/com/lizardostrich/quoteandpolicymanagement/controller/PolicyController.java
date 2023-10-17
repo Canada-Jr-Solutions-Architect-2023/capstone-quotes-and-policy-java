@@ -27,10 +27,6 @@ public class PolicyController {
     public PolicyController() {
     }
 
-//    public PolicyController(PolicyService policyService){
-//        this.policyService = policyService;
-//    }
-
     @GetMapping("/all")
     public List<Policy> getAllPolicies(){
         return this.policyService.getAllPolicies();
@@ -78,5 +74,10 @@ public class PolicyController {
     public Customer getCustomerById(@PathVariable("id") Long id){
         Customer customer = customerServiceProxy.getCustomerById(id);
         return customer;
+    }
+
+    @GetMapping("/feignTest")
+    public String FeignTest(){
+        return "Feign ok!";
     }
 }
