@@ -1,7 +1,10 @@
 package com.lizardostrich.quoteandpolicymanagement.controller;
 
+import com.lizardostrich.quoteandpolicymanagement.feign.CustomerServiceProxy;
+import com.lizardostrich.quoteandpolicymanagement.model.Customer;
 import com.lizardostrich.quoteandpolicymanagement.model.Policy;
 import com.lizardostrich.quoteandpolicymanagement.service.PolicyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +14,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/policy")
 public class PolicyController {
+    @Autowired
     private PolicyService policyService;
+    @Autowired
+    private CustomerServiceProxy customerServiceProxy;
 
-    public PolicyController(PolicyService policyService){
+    public PolicyController(PolicyService policyService, CustomerServiceProxy customerServiceProxy) {
         this.policyService = policyService;
+        this.customerServiceProxy = customerServiceProxy;
     }
+
+    public PolicyController() {
+    }
+
+//    public PolicyController(PolicyService policyService){
+//        this.policyService = policyService;
+//    }
 
     @GetMapping("/all")
     public List<Policy> getAllPolicies(){
@@ -58,5 +72,11 @@ public class PolicyController {
         else{
             return new ResponseEntity("Policy not found.", HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/getCustomerById/{id}")
+    public Customer getCustomerById(@PathVariable("id") Long id){
+        Customer customer = customerServiceProxy.getCustomerById(id);
+        return customer;
     }
 }
