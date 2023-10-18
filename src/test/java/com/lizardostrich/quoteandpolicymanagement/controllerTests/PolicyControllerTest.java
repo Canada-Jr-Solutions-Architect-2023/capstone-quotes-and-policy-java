@@ -3,6 +3,7 @@ package com.lizardostrich.quoteandpolicymanagement.controllerTests;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lizardostrich.quoteandpolicymanagement.controller.PolicyController;
+import com.lizardostrich.quoteandpolicymanagement.feign.CustomerServiceProxy;
 import com.lizardostrich.quoteandpolicymanagement.model.*;
 import com.lizardostrich.quoteandpolicymanagement.service.PolicyService;
 import com.lizardostrich.quoteandpolicymanagement.testUtils.PolicyUtility;
@@ -34,6 +35,8 @@ public class PolicyControllerTest {
     ObjectMapper objectMapper;
     @MockBean
     private PolicyService policyService;
+    @MockBean
+    private CustomerServiceProxy customerServiceProxy;
 
 
     @Test
