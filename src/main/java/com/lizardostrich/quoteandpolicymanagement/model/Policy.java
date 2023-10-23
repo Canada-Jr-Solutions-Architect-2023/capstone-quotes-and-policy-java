@@ -3,6 +3,9 @@ package com.lizardostrich.quoteandpolicymanagement.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "policy")
@@ -22,6 +25,11 @@ public class Policy {
     private double coverage;
     @Column(name = "premium")
     private double premium;
+
+// NOTE: Use this when required to figure out how many primary enrollments use the current policy
+//    @ManyToMany(mappedBy = "primaryUserPolicies")
+//    private Set<PolicyEnrollment> primaryUserPolicyEnrollments;
+
 
     public Policy(){}
     public Policy(String title, Level level, String description, double coverage, double premium) {

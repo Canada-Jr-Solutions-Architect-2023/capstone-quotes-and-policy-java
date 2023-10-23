@@ -3,6 +3,7 @@ package com.lizardostrich.quoteandpolicymanagement.controller;
 import com.lizardostrich.quoteandpolicymanagement.feign.CustomerServiceProxy;
 import com.lizardostrich.quoteandpolicymanagement.model.Customer;
 import com.lizardostrich.quoteandpolicymanagement.model.Policy;
+import com.lizardostrich.quoteandpolicymanagement.model.PolicyEnrollment;
 import com.lizardostrich.quoteandpolicymanagement.service.PolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/policy")
@@ -79,5 +82,21 @@ public class PolicyController {
     @GetMapping("/feignTest")
     public String FeignTest(){
         return "Feign ok!";
+    }
+
+    @PostMapping("/enroll")
+    public String enrollCustomer(@RequestBody PolicyEnrollmentRequest request){
+        return policyService.enrollCustomer(request);
+    }
+
+    @GetMapping("/getEnrollment/{id}")
+    public Optional<PolicyEnrollment> getEnrollmentById(@PathVariable("id") Long id){
+        Optional<PolicyEnrollment> policyEnrollment = policyService.getPolicyEnrollment(id);
+        return policyEnrollment;
+    }
+
+    @GetMapping("/getPrimaryUserPolicies/{id}")
+    public Set<Policy> getPrimaryUserPolicy(@PathVariable("id") Long id){
+        return policyService.getPrimaryUserPolicyByEnrollment(id);
     }
 }
