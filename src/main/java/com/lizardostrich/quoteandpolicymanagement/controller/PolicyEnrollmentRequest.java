@@ -1,5 +1,6 @@
 package com.lizardostrich.quoteandpolicymanagement.controller;
 
+import com.lizardostrich.quoteandpolicymanagement.model.Spouse;
 import lombok.Data;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class PolicyEnrollmentRequest {
     private List<Long> dependentPolicyIds;
     private int ageOfPrimaryApplicant;
     private int numberOfDependents;
-    private SpouseRequest spouse;
+    private Spouse spouse;
     private List<DependentRequest> dependents;
 
 }

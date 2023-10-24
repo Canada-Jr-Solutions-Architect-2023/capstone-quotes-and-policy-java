@@ -1,12 +1,16 @@
 package com.lizardostrich.quoteandpolicymanagement.service;
 
 import com.lizardostrich.quoteandpolicymanagement.controller.PolicyEnrollmentRequest;
+import com.lizardostrich.quoteandpolicymanagement.controller.SpouseRequest;
 import com.lizardostrich.quoteandpolicymanagement.model.Payment;
 import com.lizardostrich.quoteandpolicymanagement.model.Policy;
 import com.lizardostrich.quoteandpolicymanagement.model.PolicyEnrollment;
+import com.lizardostrich.quoteandpolicymanagement.model.Spouse;
 import com.lizardostrich.quoteandpolicymanagement.repository.EnrollmentRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.PolicyRepository;
+import com.lizardostrich.quoteandpolicymanagement.repository.SpouseRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@AllArgsConstructor
 @Service
 public class PolicyService {
     public PolicyService(PolicyRepository policyRepository, EnrollmentRepository enrollmentRepository) {
@@ -26,6 +31,8 @@ public class PolicyService {
     private PolicyRepository policyRepository;
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+    @Autowired
+    private SpouseRepository spouseRepository;
 
     public PolicyService(PolicyRepository policyRepository){
         this.policyRepository = policyRepository;
@@ -95,7 +102,15 @@ public class PolicyService {
             dependent_set.add(p);
         }
         policyEnrollment.setDependentPolicies(dependent_set);
+
+        //spouse
+        Spouse spouse = request.getSpouse();
         enrollmentRepository.save(policyEnrollment);
+        spouse.setPolicyEnrollment(policyEnrollment);
+        System.out.println(spouse);
+        spouseRepository.save(spouse);
+        //spouse
+
         return "Enrollment successful!";
     }
 
