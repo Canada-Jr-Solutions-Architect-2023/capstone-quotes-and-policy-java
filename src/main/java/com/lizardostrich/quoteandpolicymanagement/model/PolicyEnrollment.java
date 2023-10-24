@@ -40,4 +40,12 @@ public class PolicyEnrollment {
             inverseJoinColumns = @JoinColumn(name = "policy_id")
     )
     private Set<Policy> primaryUserPolicies;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "spouse_policies",
+            joinColumns = @JoinColumn(name = "enrollment_id"),
+            inverseJoinColumns = @JoinColumn(name = "policy_id")
+    )
+    private Set<Policy> spousePolicies;
 }

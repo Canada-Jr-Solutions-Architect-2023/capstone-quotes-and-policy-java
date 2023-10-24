@@ -76,13 +76,18 @@ public class PolicyService {
 
         for (Long pId : request.getUserPolicyIds()) {
             Policy p = getPolicyById(pId);
-            System.out.println(p);
             policy_set.add(p);
         }
 
         policyEnrollment.setPaymentStatus(Payment.PENDING);
-
         policyEnrollment.setPrimaryUserPolicies(policy_set);
+
+        Set<Policy> spouse_set = new HashSet<>();
+        for(Long pID: request.getSpousePolicyIds()){
+            Policy p = getPolicyById(pID);
+            spouse_set.add(p);
+        }
+        policyEnrollment.setSpousePolicies(spouse_set);
         enrollmentRepository.save(policyEnrollment);
         return "Enrollment successful!";
     }
