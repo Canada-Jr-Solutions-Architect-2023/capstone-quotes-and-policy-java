@@ -88,6 +88,13 @@ public class PolicyService {
             spouse_set.add(p);
         }
         policyEnrollment.setSpousePolicies(spouse_set);
+
+        Set<Policy> dependent_set = new HashSet<>();
+        for(Long pID: request.getDependentPolicyIds()){
+            Policy p = getPolicyById(pID);
+            dependent_set.add(p);
+        }
+        policyEnrollment.setDependentPolicies(dependent_set);
         enrollmentRepository.save(policyEnrollment);
         return "Enrollment successful!";
     }
