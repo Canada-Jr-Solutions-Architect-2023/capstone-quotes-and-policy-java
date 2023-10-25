@@ -11,13 +11,13 @@ import com.lizardostrich.quoteandpolicymanagement.repository.PolicyRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.SpouseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -78,17 +78,15 @@ public class PolicyService {
     public String enrollCustomer(PolicyEnrollmentRequest request) {
         PolicyEnrollment policyEnrollment = new PolicyEnrollment();
 
-        // test
+        // Set primary user policies
         Set<Policy> policy_set = new HashSet<>();
-
         for (Long pId : request.getUserPolicyIds()) {
             Policy p = getPolicyById(pId);
             policy_set.add(p);
         }
-
-        policyEnrollment.setPaymentStatus(Payment.PENDING);
         policyEnrollment.setPrimaryUserPolicies(policy_set);
 
+        //Set spouse policies
         Set<Policy> spouse_set = new HashSet<>();
         for(Long pID: request.getSpousePolicyIds()){
             Policy p = getPolicyById(pID);
@@ -96,6 +94,7 @@ public class PolicyService {
         }
         policyEnrollment.setSpousePolicies(spouse_set);
 
+        //Set dependent policies
         Set<Policy> dependent_set = new HashSet<>();
         for(Long pID: request.getDependentPolicyIds()){
             Policy p = getPolicyById(pID);
@@ -103,6 +102,17 @@ public class PolicyService {
         }
         policyEnrollment.setDependentPolicies(dependent_set);
 
+        //Setting other fields
+        policyEnrollment.setFullName(request.getFullname());
+        Date date = Date.valueOf(LocalDate.now());
+        policyEnrollment.setStartDate(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.YEAR, 1);
+        policyEnrollment.setEndDate(calendar.getTime());
+
+        policyEnrollment.setPaymentStatus(Payment.PENDING);
         //spouse
         Spouse spouse = request.getSpouse();
         enrollmentRepository.save(policyEnrollment);
