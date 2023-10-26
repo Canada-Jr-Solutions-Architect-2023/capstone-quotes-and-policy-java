@@ -99,4 +99,16 @@ public class PolicyController {
     public Set<Policy> getPrimaryUserPolicy(@PathVariable("id") Long id){
         return policyService.getPrimaryUserPolicyByEnrollment(id);
     }
+
+    @GetMapping("/getPremiumForPayment/{id}")
+    public Double getPremiumForPayment(@PathVariable("id") Long id){
+        return policyService.getPremiumForPayment(id);
+    }
+
+    @PutMapping("/updatePaymentStatus")
+    public ResponseEntity<String> updatePayment(@RequestBody PaymentRequest paymentRequest){
+        return policyService.updatePayment(paymentRequest);
+
+    }
+
 }

@@ -1,11 +1,10 @@
 package com.lizardostrich.quoteandpolicymanagement.service;
 
+import com.lizardostrich.quoteandpolicymanagement.controller.PaymentRequest;
 import com.lizardostrich.quoteandpolicymanagement.controller.PolicyEnrollmentRequest;
 import com.lizardostrich.quoteandpolicymanagement.controller.SpouseRequest;
-import com.lizardostrich.quoteandpolicymanagement.model.Payment;
-import com.lizardostrich.quoteandpolicymanagement.model.Policy;
-import com.lizardostrich.quoteandpolicymanagement.model.PolicyEnrollment;
-import com.lizardostrich.quoteandpolicymanagement.model.Spouse;
+import com.lizardostrich.quoteandpolicymanagement.model.*;
+import com.lizardostrich.quoteandpolicymanagement.repository.DependentRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.EnrollmentRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.PolicyRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.SpouseRepository;
@@ -13,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -33,6 +33,8 @@ public class PolicyService {
     private EnrollmentRepository enrollmentRepository;
     @Autowired
     private SpouseRepository spouseRepository;
+    @Autowired
+    private DependentRepository dependentRepository;
 
     public PolicyService(PolicyRepository policyRepository){
         this.policyRepository = policyRepository;
@@ -113,13 +115,19 @@ public class PolicyService {
         policyEnrollment.setEndDate(calendar.getTime());
 
         policyEnrollment.setPaymentStatus(Payment.PENDING);
-        //spouse
-        Spouse spouse = request.getSpouse();
+        policyEnrollment.setPremium(request.getPremium());
         enrollmentRepository.save(policyEnrollment);
+
+        //Save spouse in spouse table
+        Spouse spouse = request.getSpouse();
         spouse.setPolicyEnrollment(policyEnrollment);
-        System.out.println(spouse);
         spouseRepository.save(spouse);
-        //spouse
+
+        for(Dependent dependent : request.getDependents()){
+            dependent.setPolicyEnrollment(policyEnrollment);
+            dependentRepository.save(dependent);
+        }
+
 
         return "Enrollment successful!";
     }
@@ -131,5 +139,16 @@ public class PolicyService {
     public Set<Policy> getPrimaryUserPolicyByEnrollment(Long id){
         PolicyEnrollment policyEnrollment = enrollmentRepository.findById(id).orElse(null);
         return policyEnrollment.getPrimaryUserPolicies();
+    }
+
+    public Double getPremiumForPayment(Long id) {
+        PolicyEnrollment policyEnrollment = enrollmentRepository.findById(id).orElse(null);
+        return policyEnrollment.getPremium();
+    }
+
+    public ResponseEntity<String> updatePayment(PaymentRequest request){
+        System.out.println(request.getId());
+        System.out.println(request.isPayment_status());
+        return ResponseEntity.ok("Payment status updated!");
     }
 }
