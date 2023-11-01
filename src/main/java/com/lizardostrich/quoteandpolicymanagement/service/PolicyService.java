@@ -2,7 +2,6 @@ package com.lizardostrich.quoteandpolicymanagement.service;
 
 import com.lizardostrich.quoteandpolicymanagement.controller.PaymentRequest;
 import com.lizardostrich.quoteandpolicymanagement.controller.PolicyEnrollmentRequest;
-import com.lizardostrich.quoteandpolicymanagement.controller.SpouseRequest;
 import com.lizardostrich.quoteandpolicymanagement.model.*;
 import com.lizardostrich.quoteandpolicymanagement.repository.DependentRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.EnrollmentRepository;
@@ -10,7 +9,6 @@ import com.lizardostrich.quoteandpolicymanagement.repository.PolicyRepository;
 import com.lizardostrich.quoteandpolicymanagement.repository.SpouseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
