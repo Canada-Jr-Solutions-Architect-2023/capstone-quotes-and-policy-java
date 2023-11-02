@@ -3,9 +3,11 @@ package com.lizardostrich.quoteandpolicymanagement.controllerTests;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lizardostrich.quoteandpolicymanagement.controller.PolicyController;
+import com.lizardostrich.quoteandpolicymanagement.controller.PolicyEnrollmentRequest;
 import com.lizardostrich.quoteandpolicymanagement.feign.CustomerServiceProxy;
 import com.lizardostrich.quoteandpolicymanagement.model.*;
 import com.lizardostrich.quoteandpolicymanagement.service.PolicyService;
+import com.lizardostrich.quoteandpolicymanagement.testUtils.EnrollmentUtility;
 import com.lizardostrich.quoteandpolicymanagement.testUtils.PolicyUtility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -22,8 +25,10 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -174,4 +179,46 @@ public class PolicyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/policy/{id}",1L)).andExpect(status().isNotFound());
         verify(policyService,times(1)).deletePolicyById(any(Long.class));
     }
+
+    @Test
+    public void enrollCustomer() throws Exception {
+        PolicyEnrollmentRequest policyEnrollmentRequest = new PolicyEnrollmentRequest();
+        policyEnrollmentRequest.setFullname("Pankti Vyas");
+        policyEnrollmentRequest.setAgeOfPrimaryApplicant(23);
+        policyEnrollmentRequest.setNumberOfDependents(2);
+        policyEnrollmentRequest.setUserPolicyIds(List.of(1L,2L));
+
+        when(policyService.enrollCustomer(policyEnrollmentRequest)).thenReturn("Enrollment successful!");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/policy/enroll")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(policyEnrollmentRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Enrollment successful!"));
+
+        //String response = result.getResponse().getContentAsString();
+        //assertEquals("Enrollment successful!",response);
+        verify(policyService,times(1)).enrollCustomer(any(PolicyEnrollmentRequest.class));
+    }
+
+    @Test
+    public void getEnrollmentById() throws Exception {
+        PolicyEnrollment policyEnrollment = EnrollmentUtility.getPolicyEnrollment();
+        Long enrollmentId = 1L;
+        when(policyService.getPolicyEnrollment(enrollmentId)).thenReturn(Optional.ofNullable(policyEnrollment));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/getEnrollment/{id}",enrollmentId))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(policyEnrollment.getCustomerId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(policyEnrollment.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fullName").value(policyEnrollment.getFullName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.premium").value(policyEnrollment.getPremium()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.paymentStatus").value(policyEnrollment.getPaymentStatus().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.startDate").value(policyEnrollment.getStartDate().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.endDate").value(policyEnrollment.getEndDate().toString()));
+
+        verify(policyService,times(1)).getPolicyEnrollment(any(Long.class));
+    }
 }
+

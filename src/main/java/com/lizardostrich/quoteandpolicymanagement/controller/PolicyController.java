@@ -85,8 +85,8 @@ public class PolicyController {
     }
 
     @PostMapping("/enroll")
-    public String enrollCustomer(@RequestBody PolicyEnrollmentRequest request){
-        return policyService.enrollCustomer(request);
+    public ResponseEntity<String> enrollCustomer(@RequestBody PolicyEnrollmentRequest request){
+        return new ResponseEntity(policyService.enrollCustomer(request),HttpStatus.OK);
     }
 
     @GetMapping("/getEnrollment/{id}")
