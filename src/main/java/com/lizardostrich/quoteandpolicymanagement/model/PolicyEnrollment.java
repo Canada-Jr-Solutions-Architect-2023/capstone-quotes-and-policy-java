@@ -1,6 +1,7 @@
 package com.lizardostrich.quoteandpolicymanagement.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
 @Entity
 @Table(name = "policy_enrollment")
 public class PolicyEnrollment {
@@ -56,4 +58,8 @@ public class PolicyEnrollment {
             inverseJoinColumns = @JoinColumn(name = "policy_id")
     )
     private Set<Policy> dependentPolicies;
+
+    public PolicyEnrollment() {
+
+    }
 }
