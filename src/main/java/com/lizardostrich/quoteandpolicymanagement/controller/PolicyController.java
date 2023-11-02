@@ -8,6 +8,7 @@ import com.lizardostrich.quoteandpolicymanagement.service.PolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,11 +35,13 @@ public class PolicyController {
     public List<Policy> getAllPolicies(){
         return this.policyService.getAllPolicies();
     }
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
     @PostMapping
     public ResponseEntity<Policy> savePolicy(@RequestBody Policy policy){
         return new ResponseEntity<Policy>(policyService.savePolicy(policy), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
     @PutMapping
     public ResponseEntity<Policy> updatePolicy(@RequestBody Policy policy){
         if(policy.getId() == null){
@@ -61,6 +64,7 @@ public class PolicyController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Policy> deletePolicy(@PathVariable int id){
         Boolean deleted = policyService.deletePolicyById(Long.valueOf(id));
