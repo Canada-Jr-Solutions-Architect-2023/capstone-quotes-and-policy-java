@@ -141,9 +141,14 @@ public class PolicyService {
         return enrollmentRepository.findById(id);
     }
 
-    public Set<Policy> getPrimaryUserPolicyByEnrollment(Long id){
-        PolicyEnrollment policyEnrollment = enrollmentRepository.findById(id).orElse(null);
+    public Set<Policy> getPrimaryUserPolicyByEnrollment(){
+        PolicyEnrollment policyEnrollment = enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0);
+        //PolicyEnrollment policyEnrollment = enrollmentRepository.findById(id).orElse(null);
         return policyEnrollment.getPrimaryUserPolicies();
+    }
+
+    public Optional<PolicyEnrollment> getCurrentUserPolicyEnrollment(){
+        return Optional.ofNullable(enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0));
     }
 
     public Double getPremiumForPayment(Long id) {

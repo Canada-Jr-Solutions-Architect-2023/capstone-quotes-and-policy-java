@@ -104,9 +104,15 @@ public class PolicyController {
         return policyEnrollment;
     }
 
-    @GetMapping("/getPrimaryUserPolicies/{id}")
-    public Set<Policy> getPrimaryUserPolicy(@PathVariable("id") Long id){
-        return policyService.getPrimaryUserPolicyByEnrollment(id);
+    @GetMapping("/getCurrentUserEnrollment")
+    public Optional<PolicyEnrollment> getCurrentUserEnrollment(){
+        Optional<PolicyEnrollment> policyEnrollment = policyService.getCurrentUserPolicyEnrollment();
+        return policyEnrollment;
+    }
+
+    @GetMapping("/getPrimaryUserPolicies")
+    public Set<Policy> getPrimaryUserPolicy(){
+        return policyService.getPrimaryUserPolicyByEnrollment();
     }
 
     @GetMapping("/getPremiumForPayment/{id}")
