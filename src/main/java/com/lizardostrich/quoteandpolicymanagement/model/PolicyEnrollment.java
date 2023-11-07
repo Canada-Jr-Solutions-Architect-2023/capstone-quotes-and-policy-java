@@ -17,8 +17,8 @@ public class PolicyEnrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "customer_id")
-    private Long customerId;
+    @Column(name = "customer_email")
+    private String customerEmail;
 
     @Column(name = "customer_name")
     private String fullName;

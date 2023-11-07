@@ -12,7 +12,7 @@ public class EnrollmentUtility {
     static java.sql.Date date = new java.sql.Date(2023,05,05);
     static java.sql.Date endDate = new java.sql.Date(2024,05,05);
     private static PolicyEnrollment policyEnrollment = new PolicyEnrollment(1L,
-            1L,
+            "usertest@gmail.com",
             "Pankti Vyas",
             100.0,
             Payment.PENDING,

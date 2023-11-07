@@ -219,7 +219,7 @@ public class PolicyControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/policy/getEnrollment/{id}",enrollmentId))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(policyEnrollment.getCustomerId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.customerEmail").value(policyEnrollment.getCustomerEmail()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(policyEnrollment.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fullName").value(policyEnrollment.getFullName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.premium").value(policyEnrollment.getPremium()))
