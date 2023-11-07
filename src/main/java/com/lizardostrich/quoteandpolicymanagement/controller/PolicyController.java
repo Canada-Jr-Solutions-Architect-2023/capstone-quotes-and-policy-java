@@ -94,7 +94,7 @@ public class PolicyController {
 
     @PostMapping("/enroll")
     public ResponseEntity<String> enrollCustomer(@RequestBody PolicyEnrollmentRequest request){
-        System.out.println(GetUserEmail());
+        //System.out.println(GetUserEmail());
         return new ResponseEntity(policyService.enrollCustomer(request),HttpStatus.OK);
     }
 
@@ -120,15 +120,5 @@ public class PolicyController {
 
     }
 
-    public String GetUserEmail(){
-        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-        headers.add("Authorization","Bearer "+ principal.getTokenValue());
-        ResponseEntity<AWSUser> response = restTemplate.exchange("https://customer-service.auth.us-east-2.amazoncognito.com/oauth2/userInfo", HttpMethod.GET,
-                requestEntity, AWSUser.class);
-        AWSUser user = response.getBody();
-        return user.getEmail();
-    }
+
 }

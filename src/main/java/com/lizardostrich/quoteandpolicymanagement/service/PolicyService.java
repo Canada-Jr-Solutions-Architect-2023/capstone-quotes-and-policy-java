@@ -10,8 +10,14 @@ import com.lizardostrich.quoteandpolicymanagement.repository.SpouseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -106,6 +112,7 @@ public class PolicyService {
         policyEnrollment.setFullName(request.getFullname());
         Date date = Date.valueOf(LocalDate.now());
         policyEnrollment.setStartDate(date);
+        policyEnrollment.setCustomerEmail(GetUserEmail());
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -148,5 +155,17 @@ public class PolicyService {
         System.out.println(request.getId());
         System.out.println(request.isPayment_status());
         return ResponseEntity.ok("Payment status updated!");
+    }
+
+    public String GetUserEmail(){
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        headers.add("Authorization","Bearer "+ principal.getTokenValue());
+        ResponseEntity<AWSUser> response = restTemplate.exchange("https://customer-service.auth.us-east-2.amazoncognito.com/oauth2/userInfo", HttpMethod.GET,
+                requestEntity, AWSUser.class);
+        AWSUser user = response.getBody();
+        return user.getEmail();
     }
 }
