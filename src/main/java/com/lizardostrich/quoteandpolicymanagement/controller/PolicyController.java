@@ -1,15 +1,19 @@
 package com.lizardostrich.quoteandpolicymanagement.controller;
 
 import com.lizardostrich.quoteandpolicymanagement.feign.CustomerServiceProxy;
+import com.lizardostrich.quoteandpolicymanagement.model.AWSUser;
 import com.lizardostrich.quoteandpolicymanagement.model.Customer;
 import com.lizardostrich.quoteandpolicymanagement.model.Policy;
 import com.lizardostrich.quoteandpolicymanagement.model.PolicyEnrollment;
 import com.lizardostrich.quoteandpolicymanagement.service.PolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,6 +94,7 @@ public class PolicyController {
 
     @PostMapping("/enroll")
     public ResponseEntity<String> enrollCustomer(@RequestBody PolicyEnrollmentRequest request){
+        System.out.println(GetUserEmail());
         return new ResponseEntity(policyService.enrollCustomer(request),HttpStatus.OK);
     }
 
@@ -115,4 +120,15 @@ public class PolicyController {
 
     }
 
+    public String GetUserEmail(){
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        headers.add("Authorization","Bearer "+ principal.getTokenValue());
+        ResponseEntity<AWSUser> response = restTemplate.exchange("https://customer-service.auth.us-east-2.amazoncognito.com/oauth2/userInfo", HttpMethod.GET,
+                requestEntity, AWSUser.class);
+        AWSUser user = response.getBody();
+        return user.getEmail();
+    }
 }
