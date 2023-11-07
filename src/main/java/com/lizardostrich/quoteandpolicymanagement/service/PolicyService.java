@@ -147,6 +147,15 @@ public class PolicyService {
         return policyEnrollment.getPrimaryUserPolicies();
     }
 
+    public Set<Policy> getCurrentUserSpousePolicyByEnrollment() {
+        PolicyEnrollment policyEnrollment = enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0);
+        return policyEnrollment.getSpousePolicies();
+    }
+
+    public Set<Policy> getCurrentUserDependentPolicyByEnrollment() {
+        PolicyEnrollment policyEnrollment = enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0);
+        return policyEnrollment.getDependentPolicies();
+    }
     public Optional<PolicyEnrollment> getCurrentUserPolicyEnrollment(){
         return Optional.ofNullable(enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0));
     }
@@ -173,4 +182,6 @@ public class PolicyService {
         AWSUser user = response.getBody();
         return user.getEmail();
     }
+
+
 }

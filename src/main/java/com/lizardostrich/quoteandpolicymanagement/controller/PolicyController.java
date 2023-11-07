@@ -110,9 +110,19 @@ public class PolicyController {
         return policyEnrollment;
     }
 
-    @GetMapping("/getPrimaryUserPolicies")
+    @GetMapping("/getCurrentUserPolicies")
     public Set<Policy> getPrimaryUserPolicy(){
         return policyService.getPrimaryUserPolicyByEnrollment();
+    }
+
+    @GetMapping("/getCurrentUserSpousePolicies")
+    public Set<Policy> getCurrentUserSpousePolicy(){
+        return policyService.getCurrentUserSpousePolicyByEnrollment();
+    }
+
+    @GetMapping("/getCurrentUserDependentPolicies")
+    public Set<Policy> getCurrentUserDependentPolicy(){
+        return policyService.getCurrentUserDependentPolicyByEnrollment();
     }
 
     @GetMapping("/getPremiumForPayment/{id}")
