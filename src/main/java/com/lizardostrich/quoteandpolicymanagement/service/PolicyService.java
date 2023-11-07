@@ -168,6 +168,9 @@ public class PolicyService {
     public ResponseEntity<String> updatePayment(PaymentRequest request){
         System.out.println(request.getId());
         System.out.println(request.isPayment_status());
+        PolicyEnrollment policyEnrollment = enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0);
+        policyEnrollment.setPaymentStatus(Payment.COMPLETED);
+        enrollmentRepository.save(policyEnrollment);
         return ResponseEntity.ok("Payment status updated!");
     }
 
@@ -184,4 +187,18 @@ public class PolicyService {
     }
 
 
+    public String getPaymentStatus() {
+        PolicyEnrollment policyEnrollment = enrollmentRepository.findByCustomerEmail(GetUserEmail()).get(0);
+        System.out.println(policyEnrollment.getPaymentStatus());
+        Payment payment = policyEnrollment.getPaymentStatus();
+        System.out.println(payment);
+        if(payment.equals(Payment.PENDING)){
+            return "Your payment is PENDING";
+
+        }
+        else if (payment.equals(Payment.COMPLETED)){
+            return "Your payment is SUCCESSFUL";
+        }
+        return null;
+    }
 }
